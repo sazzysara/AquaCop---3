@@ -11,7 +11,6 @@ import { FloodSimulator } from "../components/FloodSimulator";
 import { ComplaintModal } from "../components/ComplaintModal";
 import { OfficerLoginModal } from "../components/OfficerLoginModal";
 import { AuthPage } from "../components/AuthPage";
-import { ProblemSolutionView } from "../components/ProblemSolutionView";
 import {
   INITIAL_WATERBODIES,
   INITIAL_ALERTS,
@@ -89,19 +88,15 @@ export default function AquaCopApp() {
       setIsAuthLoaded(true);
     }
 
-    // Check URL parameters for role routing (e.g. ?role=officer or ?role=citizen or ?tab=problem_solution)
+    // Check URL parameters for role routing (e.g. ?role=officer or ?role=citizen)
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const roleParam = params.get("role");
-      const tabParam = params.get("tab");
       if (roleParam === "officer") {
         setIsOfficerLoggedIn(true);
         setCurrentTab("officer");
       } else if (roleParam === "citizen") {
         setCurrentTab("citizen");
-      }
-      if (tabParam === "problem_solution") {
-        setCurrentTab("problem_solution");
       }
     }
 
@@ -502,8 +497,8 @@ export default function AquaCopApp() {
               : "flex-1 p-6 sm:p-8 lg:p-10 space-y-8 max-w-[1440px] w-full mx-auto"
           }
         >
-          {/* Top Basin Telemetry & Status Banner (Shown on non-satellite, non-citizen, non-problem-solution tabs to prevent duplicate header) */}
-          {currentTab !== "satellite" && currentTab !== "citizen" && currentTab !== "problem_solution" && (
+          {/* Top Basin Telemetry & Status Banner (Shown on non-satellite, non-citizen tabs to prevent duplicate header) */}
+          {currentTab !== "satellite" && currentTab !== "citizen" && (
             <section className="p-6 sm:p-7 rounded-[12px] bg-[var(--bg-card)] box-outline theme-surface space-y-5 shadow-sm">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 {/* Mission Badge & Target Details */}
@@ -566,13 +561,6 @@ export default function AquaCopApp() {
 
           {/* Active Dashboard Switch with ample separation */}
           <section className="space-y-8">
-            {currentTab === "problem_solution" && (
-              <ProblemSolutionView
-                onNavigateTab={(tab) => setCurrentTab(tab)}
-                onOpenOfficerLogin={() => setIsOfficerLoginOpen(true)}
-              />
-            )}
-
             {currentTab === "satellite" && (
               <EncroachmentHeatmap
                 waterbodies={waterbodies}

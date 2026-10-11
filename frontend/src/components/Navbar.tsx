@@ -49,7 +49,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   const { theme, toggleTheme } = useTheme();
 
   const tabTitles: Record<DashboardTab, { section: string; title: string }> = {
-    problem_solution: { section: "STRATEGY", title: "Problem & Solution Brief" },
     satellite: { section: "MONITOR", title: "Heatmap" },
     citizen: { section: "REPORTS", title: "Complaints Received" },
     officer: { section: "ENFORCEMENT", title: "Encroachment Alerts" },
