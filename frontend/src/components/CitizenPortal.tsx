@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useMemo } from "react";
 import { CitizenComplaintItem, Waterbody, AuthUser } from "./types";
+import { getApiUrl } from "@/lib/api";
 import {
   FileText,
   UploadCloud,
@@ -271,7 +272,7 @@ export const CitizenPortal: React.FC<CitizenPortalProps> = ({
     formData.append("latitude", latitude);
     formData.append("longitude", longitude);
 
-    fetch("http://localhost:8000/api/complaints", {
+    fetch(getApiUrl("/api/complaints"), {
       method: "POST",
       body: formData,
     })

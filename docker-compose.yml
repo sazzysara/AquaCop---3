@@ -1,0 +1,84 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: aquacop-backend:${AQUACOP_VERSION:-latest}
+    container_name: aquacop-backend
+    restart: unless-stopped
+    environment:
+      - PORT=8000
+      - SECRET_KEY=${SECRET_KEY:-aquacop-local-dev-secret-key-2026}
+      - DATABASE_URL=sqlite:////app/data/aquacop.db
+      - CACHE_DIR=/app/cache
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - backend-data:/app/data
+      - backend-cache:/app/cache
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - aquacop-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-}
+    image: aquacop-frontend:${AQUACOP_VERSION:-latest}
+    container_name: aquacop-frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - aquacop-network
+
+  proxy:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: aquacop-proxy:${AQUACOP_VERSION:-latest}
+    container_name: aquacop-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/nginx-health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    networks:
+      - aquacop-network
+
+volumes:
+  backend-data:
+    name: aquacop-backend-data
+  backend-cache:
+    name: aquacop-backend-cache
+
+networks:
+  aquacop-network:
+    name: aquacop-network
+    driver: bridge

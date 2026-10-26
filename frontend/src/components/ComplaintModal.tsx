@@ -16,6 +16,7 @@ import {
   Shield,
   Lock
 } from "lucide-react";
+import { getApiUrl } from "@/lib/api";
 
 interface ComplaintModalProps {
   isOpen: boolean;
@@ -77,7 +78,7 @@ export const ComplaintModal: React.FC<ComplaintModalProps> = ({
     formData.append("latitude", "12.9392");
     formData.append("longitude", "80.2195");
 
-    fetch("http://localhost:8000/api/complaints", {
+    fetch(getApiUrl("/api/complaints"), {
       method: "POST",
       body: formData,
     })

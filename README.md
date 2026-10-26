@@ -106,9 +106,78 @@ npm install
 npm run dev
 ```
 - Next.js Mission Control: `http://localhost:3000`
-- Problem & Solution Tab: `http://localhost:3000/?tab=problem_solution`
-
 ---
+
+## 🐳 Cloud-Native & DevOps Architecture (Docker, Nginx & CI/CD)
+
+AquaCop includes an enterprise-grade, locally deployable container architecture that requires **zero cloud costs or paid third-party infrastructure**.
+
+### 1. Prerequisites
+- **Windows 11** with PowerShell
+- **Docker Desktop** (with WSL 2 enabled)
+- For native development without Docker: Python 3.12+ and Node.js 20+
+
+### 2. Environment Configuration
+Copy the safe template to configure your local environment:
+```powershell
+Copy-Item .env.example .env
+```
+*(The `.env` file is excluded from git tracking to prevent secret leaks.)*
+
+### 3. Running with Docker Compose (Recommended)
+
+1. **Start Docker Desktop** on Windows 11 and ensure Docker Engine is running.
+2. In PowerShell, from the project root directory:
+
+```powershell
+# Build and run all services in detached mode
+docker compose up -d --build
+
+# Inspect the status and health of all containers
+docker compose ps
+
+# View live application and reverse-proxy logs
+docker compose logs -f
+
+# Safe shutdown (preserves your SQLite database and satellite cache)
+docker compose down
+```
+
+### 4. Verified Service Endpoints & Health Probes
+
+| Service | Local URL | Health Check Probe | Container Routing |
+| :--- | :--- | :--- | :--- |
+| **Nginx Reverse Proxy** | `http://localhost` | `http://localhost/nginx-health` | Port 80 -> Frontend & Backend |
+| **Next.js Frontend** | `http://localhost:3000` | Native HTTP 200 Probe | Direct port 3000 |
+| **FastAPI Backend** | `http://localhost:8000` | `http://localhost:8000/api/health` | Direct port 8000 |
+| **Executive Briefing** | `http://localhost/problem-solution` | Template Response Probe | Reverse proxied via Nginx |
+| **Interactive API Docs**| `http://localhost:8000/docs` | OpenAPI Schema Probe | FastAPI Swagger |
+
+### 5. Persistent Storage & Database Backups
+All SQLite records (`aquacop.db`) and satellite GeoTIFF analytical masks are stored in named Docker volumes, ensuring data survives container restarts and upgrades:
+- Database Volume: `aquacop-backend-data` (`/app/data`)
+- Cache Volume: `aquacop-backend-cache` (`/app/cache`)
+
+To create a quick manual backup of your database:
+```powershell
+docker compose cp backend:/app/data/aquacop.db ./backend/aquacop_backup.db
+```
+
+### 6. Automated Testing & CI/CD Pipeline
+AquaCop is equipped with GitHub Actions (`.github/workflows/ci.yml`) triggering on pushes and pull requests:
+- **Backend Tests**: `python -m unittest discover -s tests -p "test_*.py"` (health, threats, telemetry, and waterbody endpoints).
+- **Frontend Tests**: `npm test` & `npx tsc --noEmit` & `npm run build`.
+- **Container Verification**: Multi-stage image builds for `aquacop-backend`, `aquacop-frontend`, and `aquacop-proxy`.
+
+Run tests locally anytime:
+```powershell
+# Run backend test suite
+cd backend; python -m unittest discover -s tests -p "test_*.py"; cd ..
+
+# Run frontend test suite
+cd frontend; npm test; cd ..
+```
+
 
 ## 📜 Scientific & Data Integrity Disclosure
 - **Satellite Revisit Frequency**: Sentinel-2 MSI constellation provides imagery every ~5 days.

@@ -19,6 +19,7 @@ import {
   AlertTriangle,
   Download
 } from "lucide-react";
+import { getApiUrl } from "@/lib/api";
 
 interface OfficerPortalProps {
   alerts: EncroachmentAlertItem[];
@@ -431,7 +432,7 @@ export const OfficerPortal: React.FC<OfficerPortalProps> = ({
                   </button>
 
                   <a
-                    href={`http://localhost:8000/api/reports/eviction-notice/${inspectingAlert.waterbodyId || "WB-PALLIKARANAI"}`}
+                    href={getApiUrl(`/api/reports/eviction-notice/${inspectingAlert.waterbodyId || "WB-PALLIKARANAI"}`)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-3 rounded-[8px] bg-[var(--color-danger)] hover:opacity-90 text-white text-xs font-semibold flex items-center justify-center gap-2 transition-colors shadow-sm"

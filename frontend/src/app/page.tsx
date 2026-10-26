@@ -18,6 +18,7 @@ import {
 } from "../components/mockData";
 import { Waterbody, EncroachmentAlertItem, CitizenComplaintItem, AuthUser } from "../components/types";
 import { useTheme } from "../components/ThemeContext";
+import { getApiUrl } from "@/lib/api";
 import {
   Shield,
   Satellite,
@@ -101,7 +102,7 @@ export default function AquaCopApp() {
     }
 
     // Fetch real-time waterbodies from FastAPI backend
-    fetch("http://localhost:8000/api/waterbodies")
+    fetch(getApiUrl("/api/waterbodies"))
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
@@ -133,7 +134,7 @@ export default function AquaCopApp() {
       .catch((e) => console.log("Using cached waterbodies", e));
 
     // Fetch real-time alerts from FastAPI backend
-    fetch("http://localhost:8000/api/alerts")
+    fetch(getApiUrl("/api/alerts"))
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
@@ -170,7 +171,7 @@ export default function AquaCopApp() {
       .catch((e) => console.log("Using cached alerts", e));
 
     // Fetch real-time complaints from FastAPI backend
-    fetch("http://localhost:8000/api/complaints")
+    fetch(getApiUrl("/api/complaints"))
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {

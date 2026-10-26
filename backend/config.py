@@ -86,8 +86,10 @@ BASEMAP_ESRI = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Image
 BASEMAP_OSM = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 
 # ── Cache settings ───────────────────────────────────────────────────────────
-CACHE_DIR = os.getenv("CACHE_DIR", "./cache")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CACHE_DIR = os.getenv("CACHE_DIR", os.path.join(BASE_DIR, "cache"))
 CACHE_TTL_HOURS = 6
 
 # ── Database ─────────────────────────────────────────────────────────────────
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./aquacop.db")
+DEFAULT_DB_FILE = os.path.join(BASE_DIR, "aquacop.db").replace("\\", "/")
+DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{DEFAULT_DB_FILE}")

@@ -242,6 +242,27 @@ def get_problem_solution_page(request: Request):
     )
 
 
+@app.get("/api/health")
+def get_system_health(db: Session = Depends(get_db)):
+    """Standardized health check probe for Docker, CI/CD, and monitoring."""
+    db_status = "connected"
+    try:
+        # Perform quick query to verify DB read readiness
+        _ = db.query(WaterBody).first()
+    except Exception as e:
+        db_status = f"unhealthy: {str(e)}"
+
+    is_healthy = db_status == "connected"
+    return {
+        "status": "healthy" if is_healthy else "degraded",
+        "service": "aquacop-backend",
+        "version": "2.0.0",
+        "database": db_status,
+        "scheduler": "running" if scheduler.running else "stopped",
+        "timestamp": datetime.utcnow().isoformat() + "Z"
+    }
+
+
 @app.get("/api/status")
 def get_system_status():
     return {

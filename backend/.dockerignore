@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+*.sqlite
+aquacop.db
+cache/
+*.log
+.git
+.gitignore
+.DS_Store

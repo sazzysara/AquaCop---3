@@ -19,6 +19,7 @@ import {
   CheckCircle2,
   FileText
 } from "lucide-react";
+import { getApiUrl } from "@/lib/api";
 
 const SatelliteMapViewer = dynamic(
   () => import("./SatelliteMapViewer").then((mod) => mod.SatelliteMapViewer),
@@ -169,7 +170,7 @@ export const EncroachmentHeatmap: React.FC<EncroachmentHeatmapProps> = ({
               <span>Issue Enforcement</span>
             </button>
             <a
-              href={`http://localhost:8000/api/reports/eviction-notice/${selectedWaterbody.id || "WB-PALLIKARANAI"}`}
+              href={getApiUrl(`/api/reports/eviction-notice/${selectedWaterbody.id || "WB-PALLIKARANAI"}`)}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full py-1.5 px-2.5 rounded-[6px] bg-[var(--color-danger)] hover:opacity-90 text-white text-[11px] font-bold font-mono-val transition-colors flex items-center justify-center gap-1.5 shadow-sm text-center"
